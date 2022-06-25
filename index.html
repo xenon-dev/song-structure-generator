@@ -104,7 +104,7 @@ body {
     <p id="timeSignatureText"></p>
     <label for="songParts">Song parts: </label>
     <p id="songPartsText"></p>
-	<a href="#" class="neon-button">Generate</a>
+	<a href="#" id="generate-btn" class="neon-button">Generate</a>
 <div>
 	<br>
 	<br>
@@ -179,6 +179,7 @@ body {
 
 
         // generate values for all sets
+        let generatedStructure = () => {
         const randomizedSongLength = randomizeValues(songLength);
         const randomizedRootNote = randomizeValues(rootNote);
         const randomizedReasonableTempo = randomizeBetweenBoundaries(reasonableTempo[0], reasonableTempo[1]);
@@ -205,31 +206,45 @@ body {
                         randomizeValues(scalesRare) :
                             randomizeValues(scalesExotic);
 
-        const generatedResultSet = [
-            randomizedSongLength,
-            randomizedRootNote,
-            randomizedReasonableTempo,
-            randomizedTimeSignatureCounter,
-            randomizedTimeSignatureDenominator,
-            randomizedSongParts,
-            randomizedScaleRarity,
-            randomizedScale
-        ];
+        const generatedResultSet = {
+        randomizedSongLength: randomizedSongLength,
+            randomizedRootNote: randomizedRootNote,
+            randomizedReasonableTempo: randomizedReasonableTempo,
+            randomizedTimeSignatureCounter: randomizedTimeSignatureCounter,
+            randomizedTimeSignatureDenominator: randomizedTimeSignatureDenominator,
+            randomizedSongParts: randomizedSongParts,
+            randomizedScaleRarity: randomizedScaleRarity,
+            randomizedScale: randomizedScale
+          };
 
-        if (debug) {
+          if (debug) {
             const allSets = [songLength, rootNote, reasonableTempo, timeSignatureCounter, timeSignatureDenominator, scaleRarity, scalesCommon, scalesRare, scalesExotic, exportFileTypes];
             // for (let item of allSets) console.log(item);  
-            for (let item of generatedResultSet) console.log(item);
+            for (let key in generatedResultSet) console.log(generatedResultSet[key]);
 
         }
+        return generatedResultSet;
+      }
+        
+       // generated randomized output
+      const displayGeneratedStructure = (generatedStructure) => {
+       document.getElementById("songTempoText").innerHTML = generatedStructure['randomizedReasonableTempo'];
+       document.getElementById("rootNoteText").innerHTML = generatedStructure['randomizedRootNote'];
+       document.getElementById("scaleText").innerHTML = generatedStructure['randomizedScaleRarity'] + ': ' + generatedStructure['randomizedScale'];
+       document.getElementById("timeSignatureText").innerHTML = generatedStructure['randomizedTimeSignatureCounter'] + ' / '+ generatedStructure['randomizedTimeSignatureDenominator'];
+       document.getElementById("songPartsText").innerHTML = generatedStructure['randomizedSongLength'] + ': '+ generatedStructure['randomizedSongParts'];
+      }
 
-        // generated randomized output
-       document.getElementById("songTempoText").innerHTML = randomizedReasonableTempo;
-       document.getElementById("rootNoteText").innerHTML = randomizedRootNote;
-       document.getElementById("scaleText").innerHTML = randomizedScaleRarity + ': ' + randomizedScale;
-       document.getElementById("timeSignatureText").innerHTML = randomizedTimeSignatureCounter + ' / '+ randomizedTimeSignatureDenominator;
-       document.getElementById("songPartsText").innerHTML = randomizedSongPartLength + ': '+ randomizedSongParts;
 
+      // call once to fill when page is loaded
+      displayGeneratedStructure(generatedStructure());
+
+      const generateButton = document.getElementById('generate-btn');
+
+      generateButton?.addEventListener('click', function handleClick(event){
+        console.log(generatedStructure());
+        displayGeneratedStructure(generatedStructure());
+      });
 
     </script>
 </head>
